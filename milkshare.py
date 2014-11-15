@@ -178,10 +178,31 @@ def send_message():
     return redirect(url_for("milk_exchange_board"))
 
 @app.route("/newpost")
-def new_post():
-    
-    return render_template()
+def display_new_post():
+    return render_template("newpost.html")
 
+
+@app.route("/newpost", methods=['POST'])
+def new_post():
+
+    req_or_off = request.form.get("req_or_off")
+    amt_milk = request.form.get("amt_milk")
+    recurring = request.form.get("recurring")
+    blurb = request.form.get("blurb")
+
+
+    p = model.Post()
+    p.user_id = session['id']
+    p.req_or_off = req_or_off
+    p.date = datetime.strptime(str(datetime.now()).split()[0], "%Y-%m-%d")
+    p.amt_milk = amt_milk
+    p.recurring = recurring
+    p.blurb = blurb
+
+    model.session.add(p)
+    model.session.commit()
+    #return render_template("newpost.html")
+    return redirect(url_for("milk_exchange_board"))
 
 if __name__ == "__main__":
     app.run(debug=True)
